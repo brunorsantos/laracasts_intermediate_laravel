@@ -99,3 +99,10 @@ protected function schedule(Schedule $schedule)
 }
 ```
 
+Para funcionar deve se configurar o Cron para executar o seguinte comando artisan da seguinte forma, de minuto em minuto.
+
+```sh
+* * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1
+```
+
+Ele verificará se pussui algo para ser executado no lista do seu projeto.
