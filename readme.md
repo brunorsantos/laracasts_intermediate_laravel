@@ -2,11 +2,11 @@
 
 Lição feita com laravel 5.3
 
-## Criando pacotes(Bonus)
+## Criando comandos(Bonus)
 
 [Documentacao Laravel sobre tópico](https://laravel.com/docs/master/artisan)
 
-Para criar pacotes do artisan, basta executar(sem nenhuma opcao):
+Para criar comandos do artisan, basta executar(sem nenhuma opcao):
 ```sh
 php artisan make:command ShowGreeting
 ```
@@ -106,3 +106,47 @@ Para funcionar deve se configurar o Cron para executar o seguinte comando artisa
 ```
 
 Ele verificará se pussui algo para ser executado no lista do seu projeto.
+
+## The power of eventing
+
+O arquivo que controla os evento está em /app/Providers/EventServiceProvider.php.
+Em devem sem incluídos os mapeamentos eventos e um array de listener para cada eventos. Devemos registra no array listen:
+
+```php
+protected $listen = [
+    'App\Events\UserWasBanned' => [
+        'App\Listeners\EmailBanNotification',
+    ],
+```
+
+O evento é a situacão que ocorre passivel de ter alumas ou uma ação. E os listeners são cada ação que esse evento causa, em que deve se manter cada um com uma unica responsabilidade.
+
+Existe um comando artisan que gera eventos e listeners baseado no esta registrado no EventServiceProvider. (Gera apenas se já nao existir)
+
+```sh
+php artisan event:generate
+```
+
+Na classe criada em app\Events, pode ser adicionar no construtor, como o exemplo abaixo utilizando automatic injection do laravel com a classe a instancia de User.
+
+```php
+public function __construct(User $user)
+{
+    $this->user = $user;
+}
+```
+
+No listener, criado em App\Listeners, também pode se utilizar  automatic injection no construtor para passar classes como Mailer, Logger, etc.
+
+E no metodo hanlde, deve se efetuar a ação do listener. Em que é possivel utilizar os atributos do Event como: 
+
+```php
+public function handle(UserWasBanned $event)
+{
+    var_dump('Notify '. $event->user->name . ' foi banido do site.');
+}
+```
+
+## Containers, Aliases, and Contracts
+
+Laravel utiliza contratos do illuminate para funcionalidades como
