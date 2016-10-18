@@ -149,4 +149,38 @@ public function handle(UserWasBanned $event)
 
 ## Containers, Aliases, and Contracts
 
-Laravel utiliza contratos do illuminate para funcionalidades como
+Laravel utiliza contratos do illuminate para funcionalidades do framework como autenticacao, mail, hash.
+Eles estao no caminho: vendor/laravel/framework/src/Illuminate/Contracts
+
+Suas implementações tambem estao presentes no projeto em /vendor/laravel/framework/src/Illuminate
+
+Cada componente do lavavel possui um service provider que é responsavel por associar o componente ao conteiner da aplicacao, utilizando o metodo 'register()'
+
+Por exemplo, o service provider do componete de hash esta em: /vendor/laravel/framework/src/Illuminate/Hashing/HashServiceProvider.php
+
+No medoto register, é chamando um metodo que adiciona a um array de bindings do container a assocciação entre a chave e o objeto referente a este componente.
+
+Através do metodo app->make() (Da classe da aplicacao que extende o classe de container). 
+
+Esses bindings são localizados mesmo passando o nome da classe ou contrato do illuminate completo. Isto é feito baseado em alias da classe Aplication.
+
+Sendo assim, podemos chamar de várias formas um componente do illuminate,
+
+Exemplo o metodo make da classe hash do Illuminate
+
+
+```php
+dd(Hash::make('password')); // Usa o facade associado em /config/app.php através do array de aliases
+dd(bcrypt('password'));  // Usa o helper definido em vendor/laravel/framework/src/Illuminate/Foundation/helper.php que por fim chama app('hash')->make()
+dd(app('hash')->make('password')); Chama diretamente o bind efetuado pelo service provider do componente
+dd(app()['hash']->make('password')); Como a classe container (pai da aplication) implementa ArrayAccess pode se chamar via array os metodos
+dd(app('Illuminate\Hashing\BcryptHasher')->make('password')); funciona pois procura na lista de alias pelo bind feito no conteiner.
+
+
+```
+
+
+
+
+
+
