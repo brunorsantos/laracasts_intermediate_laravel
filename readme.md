@@ -147,6 +147,12 @@ public function handle(UserWasBanned $event)
 }
 ```
 
+Para disparar um evento, usa se:
+
+```php
+event(new UserWasBanned($user));
+```
+
 ## Containers, Aliases, and Contracts
 
 Laravel utiliza contratos do illuminate para funcionalidades do framework como autenticacao, mail, hash.
