@@ -108,6 +108,7 @@ Para funcionar deve se configurar o Cron para executar o seguinte comando artisa
 Ele verificará se pussui algo para ser executado no lista do seu projeto.
 
 ## The power of eventing
+[Documentacao Laravel sobre tópico](https://laravel.com/docs/master/events)
 
 O arquivo que controla os evento está em /app/Providers/EventServiceProvider.php.
 Em devem sem incluídos os mapeamentos eventos e um array de listener para cada eventos. Devemos registra no array listen:
@@ -189,6 +190,8 @@ dd(app('Illuminate\Hashing\BcryptHasher')->make('password')); funciona pois proc
 
 
 ## Http Middleware
+
+[Documentacao Laravel sobre tópico](https://laravel.com/docs/master/middleware)
 
 As middlewares são definidas em /app/Http/Kernel.php.
 A middlewares que sempre devem ser executadas (independentes da rota) ficam no array $middleware.
