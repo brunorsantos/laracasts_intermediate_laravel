@@ -188,5 +188,92 @@ dd(app('Illuminate\Hashing\BcryptHasher')->make('password')); funciona pois proc
 
 
 
+## Http Middleware
 
+As middlewares são definidas em /app/Http/Kernel.php.
+A middlewares que sempre devem ser executadas (independentes da rota) ficam no array $middleware.
+```php
 
+protected $middleware = [
+    \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+];
+```
+
+Tambem são definidas middlewares que sempre são executadas dependendo do grupo que sua rota está. Elas são definidas no array $middlewareGroups.
+```php
+protected $middlewareGroups = [
+    'web' => [
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\VerifyCsrfToken::class,
+        \Illuminate\Routing\Middleware\SubstituteBindings::class,
+    ],
+
+    'api' => [
+        'throttle:60,1',
+        'bindings',
+    ],
+];
+```
+
+As middlewares que são executadas sob demanda(dependendo da rota) são definidas em $routeMiddleware, sendo nomeadas pela chamada em que será feita para ela.
+
+```php
+protected $routeMiddleware = [
+    'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+    'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+    'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+    'can' => \Illuminate\Auth\Middleware\Authorize::class,
+    'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+    'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+];
+```
+
+Assim, com sua middleware definida, você pode optar por executar a mesma chamando o metodo middleware nas rotas.
+```php
+Route::get('admin/profile', function () {
+    //
+})->middleware('auth');
+```
+
+Podemos criar um middleware utilizando o artisan
+
+```sh
+php artisan make:middleware MustBeSubscribed
+```
+
+Um exemplo de logica para este middleware seria
+
+```php
+public function handle($request, Closure $next)
+{
+    $user = $request->user();
+    
+    if ($user && $user->isSubscribed()){
+        return $next($request);
+    }
+    return redirect('/');
+}
+```
+
+É possivel passar parametros para o middleware utlizando :paramtero
+```php
+Route::get('admin/profile', function () {
+    //
+})->middleware('subscribed:yearly');
+```
+
+Em que ele é recebido normalmente na função 'handle'
+
+public function handle($request, Closure $next, $plan = null)
+{
+    $user = $request->user();
+    
+    if ($user && $user->isSubscribed($plan)){
+        return $next($request);
+    }
+    return redirect('/nao_e_seu_plano');
+}
+```
