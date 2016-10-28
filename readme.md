@@ -269,7 +269,7 @@ Route::get('admin/profile', function () {
 ```
 
 Em que ele é recebido normalmente na função 'handle'
-
+```php
 public function handle($request, Closure $next, $plan = null)
 {
     $user = $request->user();
@@ -280,3 +280,42 @@ public function handle($request, Closure $next, $plan = null)
     return redirect('/nao_e_seu_plano');
 }
 ```
+
+## Dispatching Jobs
+
+
+[Documentacao Laravel sobre tópico](https://laravel.com/docs/master/queues)
+
+
+Para diferenciar a necessidade de um job e o eventos juntamente com listeners, deve se lembrar, que eventos tem como funcionamento disparar alguma funcionalidade secundária do seu sistema, enquanto Jobs são para funcionalidades que tem a ver com o core.
+
+Para criar um job:
+
+```sh
+php artisan make:job
+```
+
+Caso desejado que o job sejá executado de forma sícrona, isto é, nao será criada uma fila
+
+```sh
+php artisan make:job --sync
+```
+As classes dos jobs ficam em: '/app/Jobs', no metodo handle é implementada a funcionalidade do método.
+Para disparar um job, basta utilizar o helper dispach passando uma instancia da classe:
+
+```php
+use App\Jobs\ComplileReports;
+
+class ReportController extends Controller
+{
+    public function index(Request $req)
+    {
+    	dispatch(new ComplileReports());
+    }
+}
+```
+
+
+
+
+
